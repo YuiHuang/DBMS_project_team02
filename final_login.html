@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Recommendation System</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .fridge-status-table td,
+        .fridge-status-table th {
+            white-space: nowrap;
+        }
+
+        .fridge-status-table .btn {
+            padding: 0.375rem 0.75rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container my-3">
+        <div class="text-center mb-4">
+            <h1>Recipe Recommendation System</h1>
+        </div>
+
+        <div id="userForms">
+            <form id="loginForm" class="mb-3">
+                <h3>Login</h3>
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" class="form-control" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" class="form-control" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+
+            <form id="registerForm" class="mb-3">
+                <h3>Register</h3>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" class="form-control" id="registerEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Password</label>
+                    <input type="password" class="form-control" id="registerPassword" required>
+                </div>
+                <button type="submit" class="btn btn-success">Register</button>
+            </form>
+        </div>
+
+        <!-- Fridge Management -->
+        <div id="fridgeManagement" style="display:none;">
+            <button id="logoutButton" class="btn btn-secondary mb-3">Logout</button>
+            <form id="addIngredientForm">
+                <div class="form-group">
+                    <label for="ingredientName">Ingredient Name</label>
+                    <input type="text" class="form-control" id="ingredientName" placeholder="Ingredient Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="ingredientAmount">Amount</label>
+                    <input type="number" class="form-control" id="ingredientAmount" placeholder="Amount" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Add to Fridge</button>
+            </form>
+
+            <div class="fridge-status my-3 p-3 border">
+                <h2>Fridge Status</h2>
+                <table class="table fridge-status-table">
+                    <thead>
+                        <tr>
+                            <th>Ingredient</th>
+                            <th>Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Fridge status rows will be added here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="recipe-recommendation">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">Recommended Recipe</h3>
+                    <h4>Recipe Name</h4>
+                    <!-- Recipe description -->
+                    <p class="card-text">Ingredients: 3 eggs, 10 shrimp, 1 Scallion</p>
+                    <!-- Recipe steps -->
+                </div>
+            </div>
+
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                    <!-- Pagination items -->
+                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.16/umd.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        // Login
+        document.querySelector('#loginForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const email = document.querySelector('#loginEmail').value;
+            const password = document.querySelector('#loginPassword').value;
+
+            // 這裡模擬發送登錄請求
+            console.log("Logging in:", email, password);
+            // 要保存的話要向API發送請求
+            alert("Logged in successfully!");
+            document.querySelector('#userForms').style.display = 'none';
+            // 顯示冰箱管理介面
+            document.querySelector('#fridgeManagement').style.display = 'block';
+        });
+
+        //Registration
+        document.querySelector('#registerForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            const email = document.querySelector('#registerEmail').value;
+            const password = document.querySelector('#registerPassword').value;
+            // 這裡模擬發送註冊請求
+            console.log("Registering:", email, password);
+            // 要保存的話要向API發送請求
+            alert("Registered successfully!");
+        });
+
+        document.querySelector('#logoutButton').addEventListener('click', function () {
+            // 隱藏冰箱管理介面
+            document.querySelector('#fridgeManagement').style.display = 'none';
+            document.querySelector('#userForms').style.display = 'block';
+        });
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.querySelector('#addIngredientForm');
+            const ingredientNameInput = document.querySelector('#ingredientName');
+            const ingredientAmountInput = document.querySelector('#ingredientAmount');
+            const fridgeTableBody = document.querySelector('.fridge-status-table tbody');
+
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const name = ingredientNameInput.value.trim();
+                const amount = parseInt(ingredientAmountInput.value.trim(), 10);
+
+                if (name && amount) {
+                    const row = fridgeTableBody.insertRow();
+                    const nameCell = row.insertCell(0);
+                    const amountCell = row.insertCell(1);
+                    const actionCell = row.insertCell(2);
+
+                    nameCell.textContent = name;
+                    amountCell.textContent = amount;
+
+                    actionCell.innerHTML = `
+                  <button class="btn btn-sm btn-info" onclick="changeAmount(this, 1)">+</button>
+                  <button class="btn btn-sm btn-warning" onclick="changeAmount(this, -1)">-</button>
+                  <button class="btn btn-sm btn-danger" onclick="removeIngredient(this)">Remove</button>
+                `;
+
+                    ingredientNameInput.value = '';
+                    ingredientAmountInput.value = '';
+                }
+            });
+
+            window.changeAmount = function (button, delta) {
+                const row = button.parentElement.parentElement;
+                const amountCell = row.cells[1];
+                let amount = parseInt(amountCell.textContent, 10);
+                amount = Math.max(0, amount + delta);
+                amountCell.textContent = amount;
+            };
+
+            window.removeIngredient = function (button) {
+                const row = button.parentElement.parentElement;
+                fridgeTableBody.removeChild(row);
+            };
+        });
+    </script>
+</body>
+
+</htmlblock'; registerFormContainer.style.display='none' ; }); showRegisterFormButton.addEventListener('click',
+    function() { loginFormContainer.style.display='none' ; registerFormContainer.style.display='block' ; });
