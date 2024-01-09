@@ -75,25 +75,13 @@
             </table>
         </div>
     
+        <!-- test node.js -->
+        <div id="like_button_container"></div>
+
         <!-- test button -->
         <div class="query-test">
-            <script>
-                let now = 0;
-                function increaseNumber_check() {
-
-
-                    //number debug!
-                    if(now==0)
-                        now = 1;
-                    else
-                        now = 0;
-                    document.getElementById('counter').textContent = now;
-                }
-            </script>
-
-            <button id="myButton " style="background-color: orange; width:500px; margin-left:250px" onclick="increaseNumber_check()">What can I do?!</button>
+            <button id="myButton " style="background-color: orange; width:500px; margin-left:250px" onclick="Query_test()">What can I do?!</button>
             <span id="counter"> 0</span>
-
         </div>
 
         <div class="recipe-recommendation">
@@ -106,6 +94,7 @@
                     <p class="card-text">Ingredients: 3 eggs, 10 shrimp, 1 Scallion</p>
                     <!-- Recipe steps -->
                 </div>
+                <div class="card-body" id="result"></div>
             </div>
 
             <nav aria-label="Page navigation" class="mt-4">
@@ -170,6 +159,30 @@
             };
         });
     </script>
+    <script>
+        let now = 0;
+        function Query_test() {
+                const xhr = new XMLHttpRequest();
+                if(now==0){
+                        now=1;
+                }
+                else{
+                        xhr.open("GET", "index.php", true);
+                        xhr.onload = function() {
+                            if (xhr.status === 200) {
+                                document.getElementById("result").innerHTML = xhr.responseText;
+                            } else {
+                                document.getElementById("result").innerHTML = "Error: " + xhr.statusText;
+                            }
+                        };
+                        xhr.send();
+                }
+                document.getElementById('counter').textContent = now;
+        }
+    </script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="like_button.js"></script>
 </body>
 
 </html>
