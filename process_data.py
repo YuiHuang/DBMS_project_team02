@@ -16,7 +16,7 @@ df.to_csv(filepath, index = False, header = False)
 
 #rcp_info
 df = pd.read_csv('raw_data/RAW_recipes.csv')
-df = df[["id", "name", "minutes", "steps", "description"]]
+df = df[["id", "name", "minutes"]]
 df = df.sort_values(by=['id'])
 
 filepath = Path('processed_data/rcp_info.csv')  
@@ -33,7 +33,6 @@ df = df.reset_index(drop = True)
 data = []
 for i in range(len(df)):
     rcp_id = df.loc[i, 'id']
-    if i > 10: break
     ingredient_ids = df.loc[i, 'ingredient_ids'][1:-1].split(',')
     ingredient_ids = sorted([int(i) for i in ingredient_ids])
     for j in ingredient_ids:
