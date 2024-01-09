@@ -99,9 +99,11 @@
 
             <nav aria-label="Page navigation" class="mt-4">
                 <ul class="pagination justify-content-center">
-                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                    <!-- //<li class="page-item"><a class="page-link" href="#">Previous</a></li> -->
                     <!-- Pagination items -->
-                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                    <button id="prevPage">Previous</button>
+                    <button id="nextPage">Next</button>
+                    <!-- <li class="page-item"><a class="page-link" href="#">Next</a></li> -->
                 </ul>
             </nav>
         </div>
@@ -161,24 +163,54 @@
     </script>
     <script>
         let now = 0;
+        let perPage = 10;
+        let curItem = 0;
+        let totalItems = 0;
+    //    let totalPages = Math.ceil(totalItems / perPage);
+        let responses = [];
         function Query_test() {
                 const xhr = new XMLHttpRequest();
                 if(now==0){
-                        now=1;
+                    now=1;
                 }
                 else{
-                        xhr.open("GET", "index.php", true);
-                        xhr.onload = function() {
-                            if (xhr.status === 200) {
-                                document.getElementById("result").innerHTML = xhr.responseText;
-                            } else {
-                                document.getElementById("result").innerHTML = "Error: " + xhr.statusText;
-                            }
-                        };
-                        xhr.send();
+                    curItem = 1;
+                    xhr.open("GET", "index.php", true);
+                    xhr.onload = function() {
+                        if (xhr.status === 200) {
+                            responses = xhr.responseText.split(/<\/body>/);
+                            responses = responses[0].split(/<br>/);
+                            totalItems = responses.length-2;
+                            console.log(totalItems);
+                            console.log(responses);
+                            document.getElementById("result").innerHTML = responses[1];
+                            //result need to be a string doesn't contain any \r\n or \n
+                        } else {
+                            document.getElementById("result").innerHTML = "Error: " + xhr.statusText;
+                        }
+                    };
+                    xhr.send();
                 }
                 document.getElementById('counter').textContent = now;
         }
+        function goToPage(item) {
+            curItem = item;
+            updatePageContent();
+        }
+        function updatePageContent() {
+            document.getElementById('result').textContent = responses[curItem];
+            document.getElementById('counter').textContent = curItem;
+        }
+        document.getElementById('nextPage').addEventListener('click', function() {
+            if (curItem < totalItems) {
+                goToPage(curItem + 1);
+            }
+        });
+        document.getElementById('prevPage').addEventListener('click', function() {
+            if (curItem> 1) {
+                goToPage(curItem- 1);
+            }
+        });
     </script>
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
