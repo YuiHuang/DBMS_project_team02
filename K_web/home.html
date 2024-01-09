@@ -80,45 +80,8 @@
             <script>
                 let now = 0;
                 function increaseNumber_check() {
-                    const mysql = require('mysql');
-                    // 创建数据库连接
-                    const connection = mysql.createConnection({
-                    host: 'your-database-host',
-                    user: 'your-username',
-                    password: 'your-password',
-                    database: 'your-database-name'
-                    });
 
-                    // 连接到数据库
-                    connection.connect((err) => {
-                    if (err) {
-                        console.error('Error connecting to database:', err);
-                        return;
-                    }
-                    console.log('Connected to database');
-                    
-                    // 执行查询
-                    const sql = 'SELECT * FROM your_table';
-                    connection.query(sql, (queryError, results) => {
-                        if (queryError) {
-                        console.error('Error querying database:', queryError);
-                        return;
-                        }
 
-                        // 处理查询结果
-                        console.log('Query results:', results);
-
-                        // 关闭数据库连接
-                        connection.end((endError) => {
-                        if (endError) {
-                            console.error('Error closing database connection:', endError);
-                        } else {
-                            console.log('Connection closed');
-                        }
-                        });
-                    });
-                    });
-                    
                     //number debug!
                     if(now==0)
                         now = 1;
