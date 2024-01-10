@@ -59,7 +59,7 @@
             <button type="submit" onclick="submitForm()" class="btn btn-primary">Set value!</button>
         </form>
 
-        <div class="card-body" id="fridge_result">fridge_result</div>
+        <!-- <div class="card-body" id="fridge_result">fridge_result</div> -->
 
         <div class="fridge-status my-3 p-3 border">
             <h2>Fridge Status</h2>
@@ -91,12 +91,15 @@
             <div class="card">
                 <div class="card-body">
                     <h3 class="card-title">Recommended Recipe <span id="counter">0</span> </h3>
-                    <h4>Recipe Name</h4>
+                    <h4 id="result_dish">Recipe Name</h4>
+                    <h5 id="result_time" style = "margin-top:15px;">Time</h4>
                     <!-- Recipe description -->
-                    <p class="card-text">Ingredients: 3 eggs, 10 shrimp, 1 Scallion</p>
+                    <!-- <p class="card-text">Ingredients: 3 eggs, 10 shrimp, 1 Scallion</p> -->
                     <!-- Recipe steps -->
                 </div>
-                <div class="card-body" id="result"></div>
+                <div class="card-body" id="result_step"></div>
+                <span id="result_comment" style="margin-left: 18px"></span>
+                <!-- <div class="card-body" id="result_comment"></div> -->
             </div>
             <nav aria-label="Page navigation" class="mt-4">
                 <ul class="pagination justify-content-center">
@@ -156,7 +159,7 @@
                     ingredient_string = data.split(/<\/body>/);
                     ingredient_string = ingredient_string[0].split(/<br>/);
                     ingredient_tot = ingredient_string.length-2;
-                    document.getElementById("fridge_result").innerHTML = data;
+                    // document.getElementById("fridge_result").innerHTML = data;
 
                     fridgeTableBody.innerHTML = '';//reset resutlt
                     for (var i = 1; i <= ingredient_tot; i++) {
@@ -201,7 +204,7 @@
                             responses = responses[0].split(/<br>/);
                             totalItems = responses.length-2;
                             console.log(totalItems);
-                            document.getElementById("result").innerHTML = responses[1];
+                            goToPage(1);
                             //result need to be a string doesn't contain any \r\n or \n
                         } else {
                             document.getElementById("result").innerHTML = "Error: " + xhr.statusText;
@@ -216,7 +219,29 @@
             updatePageContent();
         }
         function updatePageContent() {
-            document.getElementById('result').textContent = responses[curItem];
+            var nowstrings = responses[curItem].split('@');
+            var nowstring_num=nowstrings.length-1;
+            if(nowstring_num>=2)
+                document.getElementById('result_dish').innerHTML = nowstrings[2][0].toUpperCase() + nowstrings[2].slice(1) + "<br>";//大+小寫
+            if(nowstring_num>=3)
+                document.getElementById('result_time').innerHTML = "Time: "+ nowstrings[3] + " minutes<br>";
+            if(nowstring_num>=4){
+                var nowcontent = '';
+                var step_string = nowstrings[4].split(',');
+                var step_string_num = step_string.length;
+                console.log(step_string);
+                console.log(step_string_num);
+                for(var i = 0; i<step_string_num; i++){
+                    var tmp = step_string[i];
+                    tmp = tmp.replace(/'/g,'');
+                    tmp = tmp.replace(/\[/g,'');
+                    tmp = tmp.replace(/\]/g,'');
+                    nowcontent = nowcontent + (i+1) + ". " + tmp + "<br>";
+                }
+                document.getElementById('result_step').innerHTML = "Steps： <br>" + nowcontent + "<br> ";
+            }
+            if(nowstring_num>=5) document.getElementById('result_comment').innerHTML = "Comments: " + nowstrings[5] + "<br><br>";
+            else document.getElementById('result_comment').innerHTML = '';
             document.getElementById('counter').textContent = curItem;
         }
         document.getElementById('nextPage').addEventListener('click', function() {
