@@ -9,11 +9,11 @@
 
 <?php
 $dataFromBackend = "";
+$datatmp= "";
 $servername = "localhost";
 $username = "root";
 $password = "";
 $database = "recipe"; 
-
 // connect to db
 $conn = new mysqli($servername, $username, $password, $database);
 
@@ -23,22 +23,7 @@ if ($conn->connect_error) {
 }
 
 if (isset($_POST["ingredientName"])) {
-
-    //預先處理防止SQL攻擊 
-/*
-target_id = 
-SELECT ingr_id
-FROM ingr
-WHERE ingr_name = 'input_ingr_name';
-
-DELETE 
-FROM ingr 
-WHERE ingr_id = target_id;
-
-INSERT INTO `user_ingr` (`user_id`, `ingr_id`, `amount`) 
-VALUES (0, ingr_id 'input_amount'); 
-*/
-
+//   預先處理防止SQL攻擊 
     $stmt = $conn->prepare("UPDATE user_ingr
                         SET amount = ?
                         WHERE ingr_id = (
