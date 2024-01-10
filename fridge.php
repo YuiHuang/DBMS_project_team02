@@ -47,7 +47,7 @@ $result = $conn->query("SELECT * FROM user_ingr,ingr where user_ingr.ingr_id=ing
 //Query result
 while ($row = $result->fetch_assoc()) {
     // print
-    $dataFromBackend = $dataFromBackend . "user_id: " . $row["user_id"] ." ingr_name: " . $row["ingr_name"] .  " amount: " . $row["amount"] . "<br>";
+    $dataFromBackend = $dataFromBackend . $row["ingr_name"] .  "@" . $row["amount"] . "<br>";
 }
 
 echo $dataFromBackend;
