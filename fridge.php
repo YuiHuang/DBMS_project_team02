@@ -9,11 +9,11 @@
 
 <?php
 $dataFromBackend = "";
+$datatmp= "";
 $servername = "localhost";
 $username = "root";
 $password = "";
 $database = "recipe"; 
-
 // connect to db
 $conn = new mysqli($servername, $username, $password, $database);
 
@@ -22,36 +22,52 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-if (isset($_POST["ingredientName"])) {
+$conn->begin_transaction();
 
-    //預先處理防止SQL攻擊 
-/*
-target_id = 
-SELECT ingr_id
-FROM ingr
-WHERE ingr_name = 'input_ingr_name';
-
-DELETE 
-FROM ingr 
-WHERE ingr_id = target_id;
-
-INSERT INTO `user_ingr` (`user_id`, `ingr_id`, `amount`) 
-VALUES (0, ingr_id 'input_amount'); 
-*/
-
-    $stmt = $conn->prepare("UPDATE user_ingr
-                        SET amount = ?
-                        WHERE ingr_id = (
-                            SELECT ingr_id
-                            FROM ingr
-                            WHERE ingr_name = ?
-                        )");
-    $stmt->bind_param("ss",$_POST["ingredientAmount"], $_POST["ingredientName"]);
+try {
+    $ingredientName = $_POST["ingredientName"];
+    $stmt = $conn->prepare("SELECT ingr_id FROM ingr WHERE ingr_name = ?");
+    $stmt->bind_param("s", $ingredientName);
     $stmt->execute();
+    $result = $stmt->get_result();
+    $data = $result->fetch_assoc();
     $stmt->close();
-} else {
-    $ingredientName = "DefaultName";
+
+    $target_id = $data['ingr_id'];
+
+    if ($data) {
+
+        $stmt = $conn->prepare("DELETE FROM user_ingr WHERE ingr_id = ?");
+        $stmt->bind_param("s", $target_id);
+        $stmt->execute();
+        $stmt->close();
+
+        $inputAmount = $_POST["ingredientAmount"];
+        $stmt = $conn->prepare("INSERT INTO `user_ingr` (`user_id`, `ingr_id`, `amount`) VALUES (0, ?, ?)");
+        $stmt->bind_param("ss", $target_id, $inputAmount);
+        $stmt->execute();
+        $stmt->close();
+    }
+
+    $conn->commit();
+} catch (Exception $e) {
+    $conn->rollback();
 }
+
+// if (isset($_POST["ingredientName"])) {
+//     $stmt = $conn->prepare("UPDATE user_ingr
+//                         SET amount = ?
+//                         WHERE ingr_id = (
+//                             SELECT ingr_id
+//                             FROM ingr
+//                             WHERE ingr_name = ?
+//                         )");
+//     $stmt->bind_param("ss",$_POST["ingredientAmount"], $_POST["ingredientName"]);
+//     $stmt->execute();
+//     $stmt->close();
+// } else {
+//     $ingredientName = "DefaultName";
+// }
 
 echo "Connected to database successfully" . "<br>";
 
