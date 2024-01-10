@@ -1,0 +1,388 @@
+<!-- http://localhost/myproject/test.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Recommendation System</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .fridge-status-table td,
+        .fridge-status-table th {
+            white-space: nowrap;
+        }
+
+        .fridge-status-table .btn {
+            padding: 0.375rem 0.75rem;
+        }
+
+        .query-test-button {
+            background-color: #ff9900;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .query-test-button:hover {
+            background-color: #e68a00;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            text-decoration: none;
+        }
+
+        .query-test-button:active {
+            background-color: #cc7a00;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .query-test {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+        }
+
+        .nav-button {
+            background-color: #00ff95;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 0 5px;
+            transition: background-color 0.2s, box-shadow 0.2s;
+        }
+
+        .nav-button:hover {
+            background-color: #00b389;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+        }
+
+        .nav-button:active {
+            background-color: #578500;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="home.html">Recipe App</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a class="nav-link" href="home.html">Back to Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="login.html">Login</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="register.html">Register</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<body>
+
+    <div class="container my-3">
+        <div class="text-center mb-4">
+            <h1>Recipe Recommendation System</h1>
+        </div>
+
+        <form id="addIngredientForm">
+            <div class="form-group">
+                <label for="ingredientName">Ingredient Name</label>
+                <input type="text" class="form-control" id="ingredientName" placeholder="Ingredient Name" required>
+            </div>
+            <div class="form-group">
+                <label for="ingredientAmount">Amount</label>
+                <input type="number" class="form-control" id="ingredientAmount" placeholder="Amount" required>
+            </div>
+            <button type="submit" onclick="submitForm()" class="btn btn-primary">Set value!</button>
+        </form>
+
+        <!-- <div class="card-body" id="fridge_result">fridge_result</div> -->
+
+        <div class="fridge-status my-3 p-3 border">
+            <h2>Fridge Status</h2>
+            <table class="table fridge-status-table">
+                <thead>
+                    <tr>
+                        <th>Ingredient</th>
+                        <th>Amount</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Fridge status rows will be added here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- <div class="query-test">
+            <button id="myButton " style="background-color: orange; width:500px; margin-left:300px"
+                onclick="Query_test()">What can I do?!</button>
+        </div> -->
+
+        <div class="query-test">
+            <button id="myButton" class="query-test-button" onclick="Query_test()">What can I do?!</button>
+        </div>
+
+        <div class="recipe-recommendation">
+            <br>
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">Recommended Recipe <span id="counter">0</span> </h3>
+                    <h4 id="result_dish">Not Yet Search</h4>
+                    <h5 id="result_time" style="margin-top:15px;">
+                        </h4>
+                        <!-- Recipe description -->
+                        <!-- <p class="card-text">Ingredients: 3 eggs, 10 shrimp, 1 Scallion</p> -->
+                        <!-- Recipe steps -->
+                </div>
+                <div class="card-body" id="result_step"></div>
+                <span id="result_comment" style="margin-left: 18px"></span>
+                <!-- <div class="card-body" id="result_comment"></div> -->
+            </div>
+            <!-- test node.js -->
+            <br>
+            <div id="like_button_container"></div>
+
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination">
+                    <button id="prevPage" class="nav-button">Previous</button>
+                    <button id="nextPage" class="nav-button">Next</button>
+                </ul>
+            </nav>
+
+        </div>
+    </div>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.9.16/umd.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const fridgeTableBody = document.querySelector('.fridge-status-table tbody');
+            window.changeAmount = function (button, delta) {
+                const row = button.parentElement.parentElement;
+                const rowString = row.innerHTML;
+                const amountCell = row.cells[1];
+                let amount = parseInt(amountCell.textContent, 10);
+                if(delta == 1){
+                    //add <td>apple</td>
+                    var xhr = new XMLHttpRequest();                    
+                    xhr.open("POST", "add.php", true);
+                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); //Content-Type
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            console.log(xhr.responseText);
+                        }
+                    };
+                    var match = rowString.split(/<\/td>/);
+                    var match2= match[0].split(/<td>/);
+                    if(match2[1]){
+                        var inputData = match2[1];
+                        console.log(inputData);
+                        var data = "inputData=" + encodeURIComponent(inputData);
+                        console.log(data);
+                        xhr.send(data);
+                    }
+                }
+                else if(amount != 0){
+                    //less <td>apple</td>
+                    var xhr = new XMLHttpRequest();                    
+                    xhr.open("POST", "less.php", true);
+                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); //Content-Type
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            console.log(xhr.responseText);
+                        }
+                    };
+                    var match = rowString.split(/<\/td>/);
+                    var match2= match[0].split(/<td>/);
+                    if(match2[1]){
+                        var inputData = match2[1];
+                        console.log(inputData);
+                        var data = "inputData=" + encodeURIComponent(inputData);
+                        console.log(data);
+                        xhr.send(data);
+                    }
+                }
+                amount = Math.max(0, amount + delta);
+                amountCell.textContent = amount;
+            };
+
+            window.removeIngredient = function (button) {
+                const row = button.parentElement.parentElement;
+                const rowString = row.innerHTML;
+                var xhr = new XMLHttpRequest();                    
+                    xhr.open("POST", "rm_ingr.php", true);
+                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); //Content-Type
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            console.log(xhr.responseText);
+                        }
+                    };
+                    var match = rowString.split(/<\/td>/);
+                    var match2= match[0].split(/<td>/);
+                    if(match2[1]){
+                        var inputData = match2[1];
+                        console.log(inputData);
+                        var data = "inputData=" + encodeURIComponent(inputData);
+                        console.log(data);
+                        xhr.send(data);
+                    }
+                fridgeTableBody.removeChild(row);
+            };
+        });
+    </script>
+    <script>
+        function submitForm() {
+            event.preventDefault();
+
+            const ingredientNameInput = document.querySelector('#ingredientName');
+            const ingredientAmountInput = document.querySelector('#ingredientAmount');
+            const fridgeTableBody = document.querySelector('.fridge-status-table tbody');
+
+            var ingredientName = ingredientNameInput.value.trim();;
+            var ingredientAmount = ingredientAmountInput.value.trim();
+            if (ingredientName && ingredientAmount) {
+                var formData = new FormData();
+                var ingredient_string;
+                var ingredient_tot;
+                formData.append('ingredientName', ingredientName);
+                formData.append('ingredientAmount', ingredientAmount);
+                fetch('fridge.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => response.text())
+                    .then(data => {
+                        ingredient_string = data.split(/<\/body>/);
+                        ingredient_string = ingredient_string[0].split(/<br>/);
+                        ingredient_tot = ingredient_string.length - 2;
+                        // document.getElementById("fridge_result").innerHTML = data;
+
+                        fridgeTableBody.innerHTML = '';//reset resutlt
+                        for (var i = 1; i <= ingredient_tot; i++) {
+                            const row = fridgeTableBody.insertRow();
+                            const nameCell = row.insertCell(0);
+                            const amountCell = row.insertCell(1);
+                            const actionCell = row.insertCell(2);
+                            var nowstring = ingredient_string[i].split('@');
+                            nameCell.textContent = nowstring[0];
+                            amountCell.textContent = nowstring[1];
+                            actionCell.innerHTML = `
+                        <button class="btn btn-sm btn-info" onclick="changeAmount(this, 1)">+</button>
+                        <button class="btn btn-sm btn-warning" onclick="changeAmount(this, -1)">-</button>
+                        <button class="btn btn-sm btn-danger" onclick="removeIngredient(this)">Remove</button>
+                        `;
+                        }
+                        ingredientNameInput.value = '';
+                        ingredientAmountInput.value = '';
+                    })
+                    .catch(error => console.error('Error submitting form:', error));
+            }
+        }
+    </script>
+
+    <script>
+        let now = 0;
+        let perPage = 10;
+        let curItem = 0;
+        let totalItems = 0;
+        let responses = [];
+        function Query_test() {
+            const xhr = new XMLHttpRequest();
+            now = 1;
+            curItem = 1;
+            xhr.open("GET", "index.php", true);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    responses = xhr.responseText.split(/<\/body>/);
+                    responses = responses[0].split(/<br>/);
+                    totalItems = responses.length - 2;
+                    console.log(totalItems);
+                    goToPage(1);
+                    //result need to be a string doesn't contain any \r\n or \n
+                } else {
+                    document.getElementById("result").innerHTML = "Error: " + xhr.statusText;
+                }
+            };
+            xhr.send();
+            document.getElementById('counter').textContent = now;
+        }
+        function goToPage(item) {
+            curItem = item;
+            updatePageContent();
+        }
+        function updatePageContent() {
+            var nowstrings = responses[curItem].split('@');
+            var nowstring_num = nowstrings.length - 1;
+            console.log(nowstrings);
+            if (nowstring_num >= 2)
+                document.getElementById('result_dish').innerHTML = nowstrings[2][0].toUpperCase() + nowstrings[2].slice(1) + "<br>";//大+小寫
+            else document.getElementById('result_dish').innerHTML = "No Result";
+
+            if (nowstring_num >= 3)
+                document.getElementById('result_time').innerHTML = "Time: " + nowstrings[3] + " minutes<br>";
+            else document.getElementById('result_time').innerHTML = "";
+
+            if (nowstring_num >= 4) {
+                var nowcontent = '';
+                var step_string = nowstrings[4].split(',');
+                var step_string_num = step_string.length;
+                console.log(step_string);
+                console.log(step_string_num);
+                for (var i = 0; i < step_string_num; i++) {
+                    var tmp = step_string[i];
+                    tmp = tmp.replace(/'/g, '');
+                    tmp = tmp.replace(/\[/g, '');
+                    tmp = tmp.replace(/\]/g, '');
+                    nowcontent = nowcontent + (i + 1) + ". " + tmp + "<br>";
+                }
+                document.getElementById('result_step').innerHTML = "Steps： <br>" + nowcontent + "<br> ";
+            }
+            else document.getElementById('result_step').innerHTML = '';
+
+            if (nowstring_num >= 5) document.getElementById('result_comment').innerHTML = "Comments: " + nowstrings[5] + "<br><br>";
+            else document.getElementById('result_comment').innerHTML = '';
+
+            document.getElementById('counter').textContent = curItem;
+        }
+        document.getElementById('nextPage').addEventListener('click', function () {
+            if (curItem < totalItems) {
+                goToPage(curItem + 1);
+            }
+        });
+        document.getElementById('prevPage').addEventListener('click', function () {
+            if (curItem > 1) {
+                goToPage(curItem - 1);
+            }
+        });
+    </script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="like_button.js"></script>
+</body>
+
+</html>
