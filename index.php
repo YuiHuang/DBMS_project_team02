@@ -25,14 +25,23 @@ if ($conn->connect_error) {
 echo "Connected to database successfully" . "<br>";
 
 //Do query
-$result = $conn->query("SELECT * FROM ingr");
+$result = $conn->query("select *
+                        from rcp_info
+                        where rcp_id not in (
+                            select distinct rcp_id
+                            from rcp_ingr
+                            where ingr_id in (
+                                select ingr_id
+                                from user_ingr
+                                where user_id = 0 and amount = 0
+                            )
+                        )");
 
 //Query result
 while ($row = $result->fetch_assoc()) {
     // print
-    $dataFromBackend = $dataFromBackend . "id: " . $row["ingr_id"] . " Name: " . $row["ingr_name"] . "<br>";
-}
-
+    $dataFromBackend = $dataFromBackend . "@" . $row["rcp_id"] . "@" . $row["rcp_name"]. "@" . $row["minutes"] . "@" . $row["steps"] . "@" . $row["ingredients"]  . "<br>";
+}//ingredient == comments
 echo $dataFromBackend;
 
 $result->free_result();
