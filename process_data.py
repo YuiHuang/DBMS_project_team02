@@ -9,15 +9,18 @@ df = df[["id", "replaced"]]
 df = df.drop_duplicates()
 df = df.sort_values(by=['id'])
 
-filepath = Path('processed_data/ingr.csv')  
+filepath = Path('processed_data/ingr.csv')
 filepath.parent.mkdir(parents=True, exist_ok=True)  
 df.to_csv(filepath, index = False, header = False)
 
 
 #rcp_info
 df = pd.read_csv('raw_data/RAW_recipes.csv')
-df = df[["id", "name", "minutes"]]
+df = df[["id", "name", "minutes", "steps", "description"]]
 df = df.sort_values(by=['id'])
+df = df.reset_index(drop = True)
+df = df.loc[df["id"] < 50000]
+df = df.drop_duplicates()
 
 filepath = Path('processed_data/rcp_info.csv')  
 filepath.parent.mkdir(parents=True, exist_ok=True)  
@@ -29,6 +32,7 @@ df = pd.read_csv('raw_data/PP_recipes.csv')
 df = df[["id", "ingredient_ids"]]
 df = df.sort_values(by=['id'])
 df = df.reset_index(drop = True)
+df = df.loc[df["id"] < 50000]
 
 data = []
 for i in range(len(df)):
@@ -38,6 +42,7 @@ for i in range(len(df)):
     for j in ingredient_ids:
         data.append([rcp_id, j])
 df2 = pd.DataFrame(data, columns=['rcp_id', 'ingr_id'])
+df2 = df.drop_duplicates()
 
 filepath = Path('processed_data/rcp_ingr.csv')
 filepath.parent.mkdir(parents=True, exist_ok=True)  
