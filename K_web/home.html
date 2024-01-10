@@ -76,23 +76,19 @@
                 </tbody>
             </table>
         </div>
-    
-        <!-- test node.js -->
-        <div id="like_button_container"></div>
 
         <!-- test button -->
         <div class="query-test">
             <button id="myButton " style="background-color: orange; width:500px; margin-left:300px" onclick="Query_test()">What can I do?!</button>
         </div>
-        <div id="timing"><br>Ready</div>
 
         <div class="recipe-recommendation">
             <br>
             <div class="card">
                 <div class="card-body">
                     <h3 class="card-title">Recommended Recipe <span id="counter">0</span> </h3>
-                    <h4 id="result_dish">Recipe Name</h4>
-                    <h5 id="result_time" style = "margin-top:15px;">Time</h4>
+                    <h4 id="result_dish">Not Yet Search</h4>
+                    <h5 id="result_time" style = "margin-top:15px;"></h4>
                     <!-- Recipe description -->
                     <!-- <p class="card-text">Ingredients: 3 eggs, 10 shrimp, 1 Scallion</p> -->
                     <!-- Recipe steps -->
@@ -101,6 +97,9 @@
                 <span id="result_comment" style="margin-left: 18px"></span>
                 <!-- <div class="card-body" id="result_comment"></div> -->
             </div>
+            <!-- test node.js -->
+            <div id="like_button_container"></div>
+            
             <nav aria-label="Page navigation" class="mt-4">
                 <ul class="pagination justify-content-center">
                     <!-- Pagination items -->
@@ -109,7 +108,6 @@
                 </ul>
             </nav>
         </div>
-
     </div>
 
     </div>
@@ -192,26 +190,22 @@
         let responses = [];
         function Query_test() {
                 const xhr = new XMLHttpRequest();
-                if(now==0){
-                    now=1;
-                }
-                else{
-                    curItem = 1;
-                    xhr.open("GET", "index.php", true);
-                    xhr.onload = function() {
-                        if (xhr.status === 200) {
-                            responses = xhr.responseText.split(/<\/body>/);
-                            responses = responses[0].split(/<br>/);
-                            totalItems = responses.length-2;
-                            console.log(totalItems);
-                            goToPage(1);
-                            //result need to be a string doesn't contain any \r\n or \n
-                        } else {
-                            document.getElementById("result").innerHTML = "Error: " + xhr.statusText;
-                        }
-                    };
-                    xhr.send();
-                }
+                now = 1;
+                curItem = 1;
+                xhr.open("GET", "index.php", true);
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        responses = xhr.responseText.split(/<\/body>/);
+                        responses = responses[0].split(/<br>/);
+                        totalItems = responses.length-2;
+                        console.log(totalItems);
+                        goToPage(1);
+                        //result need to be a string doesn't contain any \r\n or \n
+                    } else {
+                        document.getElementById("result").innerHTML = "Error: " + xhr.statusText;
+                    }
+                };
+                xhr.send();
                 document.getElementById('counter').textContent = now;
         }
         function goToPage(item) {
@@ -221,10 +215,15 @@
         function updatePageContent() {
             var nowstrings = responses[curItem].split('@');
             var nowstring_num=nowstrings.length-1;
+            console.log(nowstrings);
             if(nowstring_num>=2)
                 document.getElementById('result_dish').innerHTML = nowstrings[2][0].toUpperCase() + nowstrings[2].slice(1) + "<br>";//大+小寫
+            else document.getElementById('result_dish').innerHTML = "No Result";
+
             if(nowstring_num>=3)
                 document.getElementById('result_time').innerHTML = "Time: "+ nowstrings[3] + " minutes<br>";
+            else document.getElementById('result_time').innerHTML = "";
+            
             if(nowstring_num>=4){
                 var nowcontent = '';
                 var step_string = nowstrings[4].split(',');
@@ -240,8 +239,11 @@
                 }
                 document.getElementById('result_step').innerHTML = "Steps： <br>" + nowcontent + "<br> ";
             }
+            else document.getElementById('result_step').innerHTML = '';
+
             if(nowstring_num>=5) document.getElementById('result_comment').innerHTML = "Comments: " + nowstrings[5] + "<br><br>";
             else document.getElementById('result_comment').innerHTML = '';
+
             document.getElementById('counter').textContent = curItem;
         }
         document.getElementById('nextPage').addEventListener('click', function() {
