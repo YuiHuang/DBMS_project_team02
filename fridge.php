@@ -25,8 +25,14 @@ if ($conn->connect_error) {
 if (isset($_POST["ingredientName"])) {
 
     // 使用预处理语句，防止 SQL 注入攻击
-    $stmt = $conn->prepare("INSERT INTO `test` (`name`, `amount`) VALUES (?, ?)");
-    $stmt->bind_param("ss", $_POST["ingredientName"], $_POST["ingredientAmount"]);
+    $stmt = $conn->prepare("UPDATE user_ingr
+                        SET amount = ?
+                        WHERE ingr_id = (
+                            SELECT ingr_id
+                            FROM ingr
+                            WHERE ingr_name = ?
+                        )");
+    $stmt->bind_param("ss",$_POST["ingredientAmount"], $_POST["ingredientName"]);
     // 执行 SQL 语句
     $stmt->execute();
     // 关闭预处理语句和数据库连接
@@ -38,12 +44,12 @@ if (isset($_POST["ingredientName"])) {
 echo "Connected to database successfully" . "<br>";
 
 //Do query
-$result = $conn->query("SELECT * FROM test");
+$result = $conn->query("SELECT * FROM user_ingr,ingr where user_ingr.ingr_id=ingr.ingr_id and user_ingr.amount > 0");
 
 //Query result
 while ($row = $result->fetch_assoc()) {
     // print
-    $dataFromBackend = $dataFromBackend . "name: " . $row["name"] . " amount: " . $row["amount"] . "<br>";
+    $dataFromBackend = $dataFromBackend . "user_id: " . $row["user_id"] ." ingr_name: " . $row["ingr_name"] .  " amount: " . $row["amount"] . "<br>";
 }
 
 echo $dataFromBackend;
