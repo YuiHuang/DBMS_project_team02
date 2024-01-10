@@ -16,6 +16,64 @@
         .fridge-status-table .btn {
             padding: 0.375rem 0.75rem;
         }
+
+        .query-test-button {
+            background-color: #ff9900;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .query-test-button:hover {
+            background-color: #e68a00;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+            text-decoration: none;
+        }
+
+        .query-test-button:active {
+            background-color: #cc7a00;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .query-test {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+        }
+
+        .nav-button {
+            background-color: #00ff95;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin: 0 5px;
+            transition: background-color 0.2s, box-shadow 0.2s;
+        }
+
+        .nav-button:hover {
+            background-color: #00b389;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+        }
+
+        .nav-button:active {
+            background-color: #578500;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
     </style>
 </head>
 
@@ -76,40 +134,44 @@
                 </tbody>
             </table>
         </div>
-    
-        <!-- test node.js -->
-        <div id="like_button_container"></div>
 
-        <!-- test button -->
+        <!-- <div class="query-test">
+            <button id="myButton " style="background-color: orange; width:500px; margin-left:300px"
+                onclick="Query_test()">What can I do?!</button>
+        </div> -->
+
         <div class="query-test">
-            <button id="myButton " style="background-color: orange; width:500px; margin-left:300px" onclick="Query_test()">What can I do?!</button>
+            <button id="myButton" class="query-test-button" onclick="Query_test()">What can I do?!</button>
         </div>
-        <div id="timing"><br>Ready</div>
 
         <div class="recipe-recommendation">
             <br>
             <div class="card">
                 <div class="card-body">
                     <h3 class="card-title">Recommended Recipe <span id="counter">0</span> </h3>
-                    <h4 id="result_dish">Recipe Name</h4>
-                    <h5 id="result_time" style = "margin-top:15px;">Time</h4>
-                    <!-- Recipe description -->
-                    <!-- <p class="card-text">Ingredients: 3 eggs, 10 shrimp, 1 Scallion</p> -->
-                    <!-- Recipe steps -->
+                    <h4 id="result_dish">Not Yet Search</h4>
+                    <h5 id="result_time" style="margin-top:15px;">
+                        </h4>
+                        <!-- Recipe description -->
+                        <!-- <p class="card-text">Ingredients: 3 eggs, 10 shrimp, 1 Scallion</p> -->
+                        <!-- Recipe steps -->
                 </div>
                 <div class="card-body" id="result_step"></div>
                 <span id="result_comment" style="margin-left: 18px"></span>
                 <!-- <div class="card-body" id="result_comment"></div> -->
             </div>
+            <!-- test node.js -->
+            <br>
+            <div id="like_button_container"></div>
+
             <nav aria-label="Page navigation" class="mt-4">
-                <ul class="pagination justify-content-center">
-                    <!-- Pagination items -->
-                    <button id="prevPage" style="width:80px;">Previous</button>
-                    <button id="nextPage" style = "margin-right: 20px; width:80px;">Next</button>
+                <ul class="pagination">
+                    <button id="prevPage" class="nav-button">Previous</button>
+                    <button id="nextPage" class="nav-button">Next</button>
                 </ul>
             </nav>
-        </div>
 
+        </div>
     </div>
 
     </div>
@@ -125,6 +187,7 @@
                 const amountCell = row.cells[1];
                 let amount = parseInt(amountCell.textContent, 10);
                 amount = Math.max(0, amount + delta);
+
                 amountCell.textContent = amount;
             };
 
@@ -153,33 +216,33 @@
                 fetch('fridge.php', {
                     method: 'POST',
                     body: formData
-                    })
+                })
                     .then(response => response.text())
                     .then(data => {
-                    ingredient_string = data.split(/<\/body>/);
-                    ingredient_string = ingredient_string[0].split(/<br>/);
-                    ingredient_tot = ingredient_string.length-2;
-                    // document.getElementById("fridge_result").innerHTML = data;
+                        ingredient_string = data.split(/<\/body>/);
+                        ingredient_string = ingredient_string[0].split(/<br>/);
+                        ingredient_tot = ingredient_string.length - 2;
+                        // document.getElementById("fridge_result").innerHTML = data;
 
-                    fridgeTableBody.innerHTML = '';//reset resutlt
-                    for (var i = 1; i <= ingredient_tot; i++) {
-                        const row = fridgeTableBody.insertRow();
-                        const nameCell = row.insertCell(0);
-                        const amountCell = row.insertCell(1);
-                        const actionCell = row.insertCell(2);
-                        var nowstring = ingredient_string[i].split('@');
-                        nameCell.textContent = nowstring[0];
-                        amountCell.textContent = nowstring[1];
-                        actionCell.innerHTML = `
+                        fridgeTableBody.innerHTML = '';//reset resutlt
+                        for (var i = 1; i <= ingredient_tot; i++) {
+                            const row = fridgeTableBody.insertRow();
+                            const nameCell = row.insertCell(0);
+                            const amountCell = row.insertCell(1);
+                            const actionCell = row.insertCell(2);
+                            var nowstring = ingredient_string[i].split('@');
+                            nameCell.textContent = nowstring[0];
+                            amountCell.textContent = nowstring[1];
+                            actionCell.innerHTML = `
                         <button class="btn btn-sm btn-info" onclick="changeAmount(this, 1)">+</button>
                         <button class="btn btn-sm btn-warning" onclick="changeAmount(this, -1)">-</button>
                         <button class="btn btn-sm btn-danger" onclick="removeIngredient(this)">Remove</button>
                         `;
-                    }
-                    ingredientNameInput.value = '';
-                    ingredientAmountInput.value = '';
-                })
-                .catch(error => console.error('Error submitting form:', error));
+                        }
+                        ingredientNameInput.value = '';
+                        ingredientAmountInput.value = '';
+                    })
+                    .catch(error => console.error('Error submitting form:', error));
             }
         }
     </script>
@@ -191,28 +254,24 @@
         let totalItems = 0;
         let responses = [];
         function Query_test() {
-                const xhr = new XMLHttpRequest();
-                if(now==0){
-                    now=1;
+            const xhr = new XMLHttpRequest();
+            now = 1;
+            curItem = 1;
+            xhr.open("GET", "index.php", true);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    responses = xhr.responseText.split(/<\/body>/);
+                    responses = responses[0].split(/<br>/);
+                    totalItems = responses.length - 2;
+                    console.log(totalItems);
+                    goToPage(1);
+                    //result need to be a string doesn't contain any \r\n or \n
+                } else {
+                    document.getElementById("result").innerHTML = "Error: " + xhr.statusText;
                 }
-                else{
-                    curItem = 1;
-                    xhr.open("GET", "index.php", true);
-                    xhr.onload = function() {
-                        if (xhr.status === 200) {
-                            responses = xhr.responseText.split(/<\/body>/);
-                            responses = responses[0].split(/<br>/);
-                            totalItems = responses.length-2;
-                            console.log(totalItems);
-                            goToPage(1);
-                            //result need to be a string doesn't contain any \r\n or \n
-                        } else {
-                            document.getElementById("result").innerHTML = "Error: " + xhr.statusText;
-                        }
-                    };
-                    xhr.send();
-                }
-                document.getElementById('counter').textContent = now;
+            };
+            xhr.send();
+            document.getElementById('counter').textContent = now;
         }
         function goToPage(item) {
             curItem = item;
@@ -220,38 +279,46 @@
         }
         function updatePageContent() {
             var nowstrings = responses[curItem].split('@');
-            var nowstring_num=nowstrings.length-1;
-            if(nowstring_num>=2)
+            var nowstring_num = nowstrings.length - 1;
+            console.log(nowstrings);
+            if (nowstring_num >= 2)
                 document.getElementById('result_dish').innerHTML = nowstrings[2][0].toUpperCase() + nowstrings[2].slice(1) + "<br>";//大+小寫
-            if(nowstring_num>=3)
-                document.getElementById('result_time').innerHTML = "Time: "+ nowstrings[3] + " minutes<br>";
-            if(nowstring_num>=4){
+            else document.getElementById('result_dish').innerHTML = "No Result";
+
+            if (nowstring_num >= 3)
+                document.getElementById('result_time').innerHTML = "Time: " + nowstrings[3] + " minutes<br>";
+            else document.getElementById('result_time').innerHTML = "";
+
+            if (nowstring_num >= 4) {
                 var nowcontent = '';
                 var step_string = nowstrings[4].split(',');
                 var step_string_num = step_string.length;
                 console.log(step_string);
                 console.log(step_string_num);
-                for(var i = 0; i<step_string_num; i++){
+                for (var i = 0; i < step_string_num; i++) {
                     var tmp = step_string[i];
-                    tmp = tmp.replace(/'/g,'');
-                    tmp = tmp.replace(/\[/g,'');
-                    tmp = tmp.replace(/\]/g,'');
-                    nowcontent = nowcontent + (i+1) + ". " + tmp + "<br>";
+                    tmp = tmp.replace(/'/g, '');
+                    tmp = tmp.replace(/\[/g, '');
+                    tmp = tmp.replace(/\]/g, '');
+                    nowcontent = nowcontent + (i + 1) + ". " + tmp + "<br>";
                 }
                 document.getElementById('result_step').innerHTML = "Steps： <br>" + nowcontent + "<br> ";
             }
-            if(nowstring_num>=5) document.getElementById('result_comment').innerHTML = "Comments: " + nowstrings[5] + "<br><br>";
+            else document.getElementById('result_step').innerHTML = '';
+
+            if (nowstring_num >= 5) document.getElementById('result_comment').innerHTML = "Comments: " + nowstrings[5] + "<br><br>";
             else document.getElementById('result_comment').innerHTML = '';
+
             document.getElementById('counter').textContent = curItem;
         }
-        document.getElementById('nextPage').addEventListener('click', function() {
+        document.getElementById('nextPage').addEventListener('click', function () {
             if (curItem < totalItems) {
                 goToPage(curItem + 1);
             }
         });
-        document.getElementById('prevPage').addEventListener('click', function() {
-            if (curItem> 1) {
-                goToPage(curItem- 1);
+        document.getElementById('prevPage').addEventListener('click', function () {
+            if (curItem > 1) {
+                goToPage(curItem - 1);
             }
         });
     </script>
