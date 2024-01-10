@@ -24,7 +24,7 @@ if ($conn->connect_error) {
 
 if (isset($_POST["ingredientName"])) {
 
-    // 使用预处理语句，防止 SQL 注入攻击
+    //預先處理防止SQL攻擊 
     $stmt = $conn->prepare("UPDATE user_ingr
                         SET amount = ?
                         WHERE ingr_id = (
@@ -33,9 +33,7 @@ if (isset($_POST["ingredientName"])) {
                             WHERE ingr_name = ?
                         )");
     $stmt->bind_param("ss",$_POST["ingredientAmount"], $_POST["ingredientName"]);
-    // 执行 SQL 语句
     $stmt->execute();
-    // 关闭预处理语句和数据库连接
     $stmt->close();
 } else {
     $ingredientName = "DefaultName";
