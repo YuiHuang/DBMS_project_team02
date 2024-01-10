@@ -82,14 +82,13 @@
         <!-- test button -->
         <div class="query-test">
             <button id="myButton " style="background-color: orange; width:500px; margin-left:300px" onclick="Query_test()">What can I do?!</button>
-            <span id="counter"> 0</span>
         </div>
 
         <div class="recipe-recommendation">
             <br>
             <div class="card">
                 <div class="card-body">
-                    <h3 class="card-title">Recommended Recipe</h3>
+                    <h3 class="card-title">Recommended Recipe <span id="counter">0</span> </h3>
                     <h4>Recipe Name</h4>
                     <!-- Recipe description -->
                     <p class="card-text">Ingredients: 3 eggs, 10 shrimp, 1 Scallion</p>
@@ -97,14 +96,11 @@
                 </div>
                 <div class="card-body" id="result"></div>
             </div>
-
             <nav aria-label="Page navigation" class="mt-4">
                 <ul class="pagination justify-content-center">
-                    <!-- //<li class="page-item"><a class="page-link" href="#">Previous</a></li> -->
                     <!-- Pagination items -->
-                    <button id="prevPage">Previous</button>
-                    <button id="nextPage" style = "margin-right: 20px;">Next</button>
-                    <!-- <li class="page-item"><a class="page-link" href="#">Next</a></li> -->
+                    <button id="prevPage" style="width:80px;">Previous</button>
+                    <button id="nextPage" style = "margin-right: 20px; width:80px;">Next</button>
                 </ul>
             </nav>
         </div>
@@ -167,7 +163,6 @@
         let perPage = 10;
         let curItem = 0;
         let totalItems = 0;
-    //    let totalPages = Math.ceil(totalItems / perPage);
         let responses = [];
         function Query_test() {
                 const xhr = new XMLHttpRequest();
