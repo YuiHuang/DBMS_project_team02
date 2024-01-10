@@ -56,11 +56,10 @@
                 <label for="ingredientAmount">Amount</label>
                 <input type="number" class="form-control" id="ingredientAmount" placeholder="Amount" required>
             </div>
-            <button type="submit" onclick="submitForm()">Submit</button>
-            <button type="submit" class="btn btn-primary">Add to Fridge</button>
+            <button type="submit" onclick="submitForm()" class="btn btn-primary">Set value!</button>
         </form>
 
-        <div class="card-body" id="fridge_result">fridge_result</div>
+        <!-- <div class="card-body" id="fridge_result">fridge_result</div> -->
 
         <div class="fridge-status my-3 p-3 border">
             <h2>Fridge Status</h2>
@@ -77,28 +76,30 @@
                 </tbody>
             </table>
         </div>
-    
-        <!-- test node.js -->
-        <div id="like_button_container"></div>
 
         <!-- test button -->
         <div class="query-test">
             <button id="myButton " style="background-color: orange; width:500px; margin-left:300px" onclick="Query_test()">What can I do?!</button>
         </div>
-        <div id="timing"><br>Ready</div>
 
         <div class="recipe-recommendation">
             <br>
             <div class="card">
                 <div class="card-body">
                     <h3 class="card-title">Recommended Recipe <span id="counter">0</span> </h3>
-                    <h4>Recipe Name</h4>
+                    <h4 id="result_dish">Not Yet Search</h4>
+                    <h5 id="result_time" style = "margin-top:15px;"></h4>
                     <!-- Recipe description -->
-                    <p class="card-text">Ingredients: 3 eggs, 10 shrimp, 1 Scallion</p>
+                    <!-- <p class="card-text">Ingredients: 3 eggs, 10 shrimp, 1 Scallion</p> -->
                     <!-- Recipe steps -->
                 </div>
-                <div class="card-body" id="result"></div>
+                <div class="card-body" id="result_step"></div>
+                <span id="result_comment" style="margin-left: 18px"></span>
+                <!-- <div class="card-body" id="result_comment"></div> -->
             </div>
+            <!-- test node.js -->
+            <div id="like_button_container"></div>
+            
             <nav aria-label="Page navigation" class="mt-4">
                 <ul class="pagination justify-content-center">
                     <!-- Pagination items -->
@@ -107,7 +108,6 @@
                 </ul>
             </nav>
         </div>
-
     </div>
 
     </div>
@@ -117,36 +117,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const form = document.querySelector('#addIngredientForm');
-            const ingredientNameInput = document.querySelector('#ingredientName');
-            const ingredientAmountInput = document.querySelector('#ingredientAmount');
             const fridgeTableBody = document.querySelector('.fridge-status-table tbody');
-
-            form.addEventListener('submit', function (event) {
-                event.preventDefault();
-                const name = ingredientNameInput.value.trim();
-                const amount = parseInt(ingredientAmountInput.value.trim(), 10);
-
-                if (name && amount) {
-                    const row = fridgeTableBody.insertRow();
-                    const nameCell = row.insertCell(0);
-                    const amountCell = row.insertCell(1);
-                    const actionCell = row.insertCell(2);
-
-                    nameCell.textContent = name;
-                    amountCell.textContent = amount;
-
-                    actionCell.innerHTML = `
-          <button class="btn btn-sm btn-info" onclick="changeAmount(this, 1)">+</button>
-          <button class="btn btn-sm btn-warning" onclick="changeAmount(this, -1)">-</button>
-          <button class="btn btn-sm btn-danger" onclick="removeIngredient(this)">Remove</button>
-        `;
-
-                    ingredientNameInput.value = '';
-                    ingredientAmountInput.value = '';
-                }
-            });
-
             window.changeAmount = function (button, delta) {
                 const row = button.parentElement.parentElement;
                 const amountCell = row.cells[1];
@@ -161,25 +132,53 @@
             };
         });
     </script>
-
     <script>
         function submitForm() {
             event.preventDefault();
 
-            var ingredientName = document.getElementById('ingredientName').value;
-            var ingredientAmount = document.getElementById('ingredientAmount').value;
-            var formData = new FormData();
-            formData.append('ingredientName', ingredientName);
-            formData.append('ingredientAmount', ingredientAmount);
-            fetch('fridge.php', {
-                method: 'POST',
-                body: formData
+            const ingredientNameInput = document.querySelector('#ingredientName');
+            const ingredientAmountInput = document.querySelector('#ingredientAmount');
+            const fridgeTableBody = document.querySelector('.fridge-status-table tbody');
+
+            var ingredientName = ingredientNameInput.value.trim();;
+            var ingredientAmount = ingredientAmountInput.value.trim();
+            if (ingredientName && ingredientAmount) {
+                var formData = new FormData();
+                var ingredient_string;
+                var ingredient_tot;
+                formData.append('ingredientName', ingredientName);
+                formData.append('ingredientAmount', ingredientAmount);
+                fetch('fridge.php', {
+                    method: 'POST',
+                    body: formData
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                    ingredient_string = data.split(/<\/body>/);
+                    ingredient_string = ingredient_string[0].split(/<br>/);
+                    ingredient_tot = ingredient_string.length-2;
+                    // document.getElementById("fridge_result").innerHTML = data;
+
+                    fridgeTableBody.innerHTML = '';//reset resutlt
+                    for (var i = 1; i <= ingredient_tot; i++) {
+                        const row = fridgeTableBody.insertRow();
+                        const nameCell = row.insertCell(0);
+                        const amountCell = row.insertCell(1);
+                        const actionCell = row.insertCell(2);
+                        var nowstring = ingredient_string[i].split('@');
+                        nameCell.textContent = nowstring[0];
+                        amountCell.textContent = nowstring[1];
+                        actionCell.innerHTML = `
+                        <button class="btn btn-sm btn-info" onclick="changeAmount(this, 1)">+</button>
+                        <button class="btn btn-sm btn-warning" onclick="changeAmount(this, -1)">-</button>
+                        <button class="btn btn-sm btn-danger" onclick="removeIngredient(this)">Remove</button>
+                        `;
+                    }
+                    ingredientNameInput.value = '';
+                    ingredientAmountInput.value = '';
                 })
-                .then(response => response.text())
-                .then(data => {
-                document.getElementById("fridge_result").innerHTML = data;
-            })
-            .catch(error => console.error('Error submitting form:', error));
+                .catch(error => console.error('Error submitting form:', error));
+            }
         }
     </script>
 
@@ -191,26 +190,22 @@
         let responses = [];
         function Query_test() {
                 const xhr = new XMLHttpRequest();
-                if(now==0){
-                    now=1;
-                }
-                else{
-                    curItem = 1;
-                    xhr.open("GET", "index.php", true);
-                    xhr.onload = function() {
-                        if (xhr.status === 200) {
-                            responses = xhr.responseText.split(/<\/body>/);
-                            responses = responses[0].split(/<br>/);
-                            totalItems = responses.length-2;
-                            console.log(totalItems);
-                            document.getElementById("result").innerHTML = responses[1];
-                            //result need to be a string doesn't contain any \r\n or \n
-                        } else {
-                            document.getElementById("result").innerHTML = "Error: " + xhr.statusText;
-                        }
-                    };
-                    xhr.send();
-                }
+                now = 1;
+                curItem = 1;
+                xhr.open("GET", "index.php", true);
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        responses = xhr.responseText.split(/<\/body>/);
+                        responses = responses[0].split(/<br>/);
+                        totalItems = responses.length-2;
+                        console.log(totalItems);
+                        goToPage(1);
+                        //result need to be a string doesn't contain any \r\n or \n
+                    } else {
+                        document.getElementById("result").innerHTML = "Error: " + xhr.statusText;
+                    }
+                };
+                xhr.send();
                 document.getElementById('counter').textContent = now;
         }
         function goToPage(item) {
@@ -218,7 +213,37 @@
             updatePageContent();
         }
         function updatePageContent() {
-            document.getElementById('result').textContent = responses[curItem];
+            var nowstrings = responses[curItem].split('@');
+            var nowstring_num=nowstrings.length-1;
+            console.log(nowstrings);
+            if(nowstring_num>=2)
+                document.getElementById('result_dish').innerHTML = nowstrings[2][0].toUpperCase() + nowstrings[2].slice(1) + "<br>";//大+小寫
+            else document.getElementById('result_dish').innerHTML = "No Result";
+
+            if(nowstring_num>=3)
+                document.getElementById('result_time').innerHTML = "Time: "+ nowstrings[3] + " minutes<br>";
+            else document.getElementById('result_time').innerHTML = "";
+            
+            if(nowstring_num>=4){
+                var nowcontent = '';
+                var step_string = nowstrings[4].split(',');
+                var step_string_num = step_string.length;
+                console.log(step_string);
+                console.log(step_string_num);
+                for(var i = 0; i<step_string_num; i++){
+                    var tmp = step_string[i];
+                    tmp = tmp.replace(/'/g,'');
+                    tmp = tmp.replace(/\[/g,'');
+                    tmp = tmp.replace(/\]/g,'');
+                    nowcontent = nowcontent + (i+1) + ". " + tmp + "<br>";
+                }
+                document.getElementById('result_step').innerHTML = "Steps： <br>" + nowcontent + "<br> ";
+            }
+            else document.getElementById('result_step').innerHTML = '';
+
+            if(nowstring_num>=5) document.getElementById('result_comment').innerHTML = "Comments: " + nowstrings[5] + "<br><br>";
+            else document.getElementById('result_comment').innerHTML = '';
+
             document.getElementById('counter').textContent = curItem;
         }
         document.getElementById('nextPage').addEventListener('click', function() {

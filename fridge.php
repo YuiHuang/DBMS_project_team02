@@ -9,11 +9,11 @@
 
 <?php
 $dataFromBackend = "";
+$datatmp= "";
 $servername = "localhost";
 $username = "root";
 $password = "";
 $database = "recipe"; 
-
 // connect to db
 $conn = new mysqli($servername, $username, $password, $database);
 
@@ -23,8 +23,7 @@ if ($conn->connect_error) {
 }
 
 if (isset($_POST["ingredientName"])) {
-
-    //預先處理防止SQL攻擊 
+//   預先處理防止SQL攻擊 
     $stmt = $conn->prepare("UPDATE user_ingr
                         SET amount = ?
                         WHERE ingr_id = (
@@ -47,7 +46,7 @@ $result = $conn->query("SELECT * FROM user_ingr,ingr where user_ingr.ingr_id=ing
 //Query result
 while ($row = $result->fetch_assoc()) {
     // print
-    $dataFromBackend = $dataFromBackend . "user_id: " . $row["user_id"] ." ingr_name: " . $row["ingr_name"] .  " amount: " . $row["amount"] . "<br>";
+    $dataFromBackend = $dataFromBackend . $row["ingr_name"] .  "@" . $row["amount"] . "<br>";
 }
 
 echo $dataFromBackend;
