@@ -57,8 +57,11 @@
                 <label for="ingredientAmount">Amount</label>
                 <input type="number" class="form-control" id="ingredientAmount" placeholder="Amount" required>
             </div>
-            <button type="submit" class="btn btn-primary">Add to Fridge</button>
+            <button type="submit" onclick="submitForm()">Submit</button>
+            <!-- <button type="submit" class="btn btn-primary">Add to Fridge</button> -->
         </form>
+
+        <div class="card-body" id="fridge_result">fridge_result</div>
 
         <div class="fridge-status my-3 p-3 border">
             <h2>Fridge Status</h2>
@@ -160,6 +163,28 @@
             };
         });
     </script>
+
+    <script>
+        function submitForm() {
+            event.preventDefault();
+
+            var ingredientName = document.getElementById('ingredientName').value;
+            var ingredientAmount = document.getElementById('ingredientAmount').value;
+            var formData = new FormData();
+            formData.append('ingredientName', ingredientName);
+            formData.append('ingredientAmount', ingredientAmount);
+            fetch('fridge.php', {
+                method: 'POST',
+                body: formData
+                })
+                .then(response => response.text())
+                .then(data => {
+                document.getElementById("fridge_result").innerHTML = data;
+            })
+            .catch(error => console.error('Error submitting form:', error));
+        }
+    </script>
+
     <script>
         let now = 0;
         let perPage = 10;
