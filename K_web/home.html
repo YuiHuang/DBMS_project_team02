@@ -56,8 +56,7 @@
                 <label for="ingredientAmount">Amount</label>
                 <input type="number" class="form-control" id="ingredientAmount" placeholder="Amount" required>
             </div>
-            <button type="submit" onclick="submitForm()">Submit</button>
-            <!-- <button type="submit" class="btn btn-primary">Add to Fridge</button> -->
+            <button type="submit" onclick="submitForm()" class="btn btn-primary">Set value!</button>
         </form>
 
         <div class="card-body" id="fridge_result">fridge_result</div>
@@ -117,35 +116,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const form = document.querySelector('#addIngredientForm');
-            const ingredientNameInput = document.querySelector('#ingredientName');
-            const ingredientAmountInput = document.querySelector('#ingredientAmount');
             const fridgeTableBody = document.querySelector('.fridge-status-table tbody');
-            form.addEventListener('submit', function (event) {           
-                event.preventDefault();
-                const name = ingredientNameInput.value.trim();
-                const amount = parseInt(ingredientAmountInput.value.trim(), 10);
-
-                if (name && amount) {
-                    const row = fridgeTableBody.insertRow();
-                    const nameCell = row.insertCell(0);
-                    const amountCell = row.insertCell(1);
-                    const actionCell = row.insertCell(2);
-
-                    nameCell.textContent = name;
-                    amountCell.textContent = amount;
-
-                    actionCell.innerHTML = `
-          <button class="btn btn-sm btn-info" onclick="changeAmount(this, 1)">+</button>
-          <button class="btn btn-sm btn-warning" onclick="changeAmount(this, -1)">-</button>
-          <button class="btn btn-sm btn-danger" onclick="removeIngredient(this)">Remove</button>
-        `;
-
-                    ingredientNameInput.value = '';
-                    ingredientAmountInput.value = '';
-                }
-            });
-
             window.changeAmount = function (button, delta) {
                 const row = button.parentElement.parentElement;
                 const amountCell = row.cells[1];
@@ -160,7 +131,6 @@
             };
         });
     </script>
-
     <script>
         function submitForm() {
             event.preventDefault();
@@ -186,7 +156,9 @@
                     ingredient_string = data.split(/<\/body>/);
                     ingredient_string = ingredient_string[0].split(/<br>/);
                     ingredient_tot = ingredient_string.length-2;
-                    // document.getElementById("fridge_result").innerHTML = data;
+                    document.getElementById("fridge_result").innerHTML = data;
+
+                    fridgeTableBody.innerHTML = '';//reset resutlt
                     for (var i = 1; i <= ingredient_tot; i++) {
                         const row = fridgeTableBody.insertRow();
                         const nameCell = row.insertCell(0);
@@ -203,7 +175,6 @@
                     }
                     ingredientNameInput.value = '';
                     ingredientAmountInput.value = '';
-
                 })
                 .catch(error => console.error('Error submitting form:', error));
             }
