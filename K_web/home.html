@@ -83,6 +83,8 @@
         <div class="query-test">
             <button id="myButton " style="background-color: orange; width:500px; margin-left:300px" onclick="Query_test()">What can I do?!</button>
         </div>
+        <div id="timing"><br>Ready</div>
+
 
         <div class="recipe-recommendation">
             <br>
@@ -178,7 +180,6 @@
                             responses = responses[0].split(/<br>/);
                             totalItems = responses.length-2;
                             console.log(totalItems);
-                            console.log(responses);
                             document.getElementById("result").innerHTML = responses[1];
                             //result need to be a string doesn't contain any \r\n or \n
                         } else {
