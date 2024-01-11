@@ -1,4 +1,4 @@
-<!-- http://localhost/myproject/test.html -->
+<!-- http://localhost/myproject/home.html -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -74,11 +74,38 @@
             justify-content: center;
             align-items: center;
         }
+
+        #searchInput,
+        #dataDropdown {
+            border: 1px solid #ced4da;
+            padding-right: 2.375rem;
+            background-position: right 0.75rem center;
+            background-size: 1.5em;
+            background-repeat: no-repeat;
+        }
+
+        #dataDropdown {
+            background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" fill="%230070ff" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.5 6.5a.5.5 0 0 1 .8-.4L8 10.293l5.7-4.2a.5.5 0 0 1 .8.4v.9a.5.5 0 0 1-.15.35l-6 4.5a.5.5 0 0 1-.6 0l-6-4.5A.5.5 0 0 1 1 7.4v-.9z"/></svg>');
+        }
+
+        .search-group {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: start;
+        }
+
+        @media (max-width: 576px) {
+            .search-group {
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a class="navbar-brand" href="home.html">Recipe App</a>
+    <span class="navbar-text ml-auto" id="usernameDisplay"></span>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -116,6 +143,17 @@
             </div>
             <button type="submit" onclick="submitForm()" class="btn btn-primary">Set value!</button>
         </form>
+
+        <!-- search the ingredients -->
+        <!-- <input type="text" id="searchInput" placeholder="輸入搜尋內容" style = "margin-top:15px;">
+        <select id="dataDropdown"></select> -->
+
+        <div class="container my-3">
+            <div class="search-group">
+                <input type="text" id="searchInput" class="form-control" placeholder="輸入搜尋內容">
+                <select id="dataDropdown" class="custom-select"></select>
+            </div>
+        </div>
 
         <!-- <div class="card-body" id="fridge_result">fridge_result</div> -->
 
@@ -184,15 +222,73 @@
             const fridgeTableBody = document.querySelector('.fridge-status-table tbody');
             window.changeAmount = function (button, delta) {
                 const row = button.parentElement.parentElement;
+                const rowString = row.innerHTML;
                 const amountCell = row.cells[1];
                 let amount = parseInt(amountCell.textContent, 10);
+                if (delta == 1) {
+                    //add <td>apple</td>
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "add.php", true);
+                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); //Content-Type
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            console.log(xhr.responseText);
+                        }
+                    };
+                    var match = rowString.split(/<\/td>/);
+                    var match2 = match[0].split(/<td>/);
+                    if (match2[1]) {
+                        var inputData = match2[1];
+                        console.log(inputData);
+                        var data = "inputData=" + encodeURIComponent(inputData);
+                        console.log(data);
+                        xhr.send(data);
+                    }
+                }
+                else if (amount != 0) {
+                    //less <td>apple</td>
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "less.php", true);
+                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); //Content-Type
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            console.log(xhr.responseText);
+                        }
+                    };
+                    var match = rowString.split(/<\/td>/);
+                    var match2 = match[0].split(/<td>/);
+                    if (match2[1]) {
+                        var inputData = match2[1];
+                        console.log(inputData);
+                        var data = "inputData=" + encodeURIComponent(inputData);
+                        console.log(data);
+                        xhr.send(data);
+                    }
+                }
                 amount = Math.max(0, amount + delta);
-
                 amountCell.textContent = amount;
             };
 
             window.removeIngredient = function (button) {
                 const row = button.parentElement.parentElement;
+                const rowString = row.innerHTML;
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "rm_ingr.php", true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); //Content-Type
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        console.log(xhr.responseText);
+                    }
+                };
+                var match = rowString.split(/<\/td>/);
+                var match2 = match[0].split(/<td>/);
+                if (match2[1]) {
+                    var inputData = match2[1];
+                    console.log(inputData);
+                    var data = "inputData=" + encodeURIComponent(inputData);
+                    console.log(data);
+                    xhr.send(data);
+                }
                 fridgeTableBody.removeChild(row);
             };
         });
@@ -245,6 +341,25 @@
                     .catch(error => console.error('Error submitting form:', error));
             }
         }
+    </script>
+
+    <script>
+        function getQueryParam(param) {
+            var search = window.location.search.substring(1);
+            var vars = search.split('&');
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split('=');
+                if (pair[0] == param) {
+                    return decodeURIComponent(pair[1]);
+                }
+            }
+            return false;
+        }
+
+        var username = getQueryParam('username');
+        if (username) {
+            document.getElementById('usernameDisplay').textContent = username;
+        } else document.getElementById('usernameDisplay').textContent = "";
     </script>
 
     <script>
@@ -322,6 +437,7 @@
             }
         });
     </script>
+    <script src="list.js"></script>
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     <script src="like_button.js"></script>
