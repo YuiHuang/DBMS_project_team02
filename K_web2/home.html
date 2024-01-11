@@ -117,6 +117,10 @@
             <button type="submit" onclick="submitForm()" class="btn btn-primary">Set value!</button>
         </form>
 
+        <!-- search the ingredients -->
+        <input type="text" id="searchInput" placeholder="輸入搜尋內容" style = "margin-top:15px;">
+        <select id="dataDropdown"></select>
+
         <!-- <div class="card-body" id="fridge_result">fridge_result</div> -->
 
         <div class="fridge-status my-3 p-3 border">
@@ -380,6 +384,7 @@
             }
         });
     </script>
+    <script src="list.js"></script>
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     <script src="like_button.js"></script>
