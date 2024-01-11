@@ -1,5 +1,5 @@
 <?php
-// 連接到資料庫，獲取資料
+
 $servername = "localhost";
 $username = "root";
 $password = "";
@@ -24,7 +24,7 @@ if ($result->num_rows > 0) {
 
 $conn->close();
 
-// 返回JSON格式的資料
+//JSON
 header('Content-Type: application/json');
 echo json_encode($data);
 ?>
